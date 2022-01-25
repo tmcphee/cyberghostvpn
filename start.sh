@@ -19,16 +19,16 @@
 		sysctl -w net.ipv4.ip_forward=1
 			
 		sudo ufw disable #Stop Firewall
+		export LOCAL_GATEWAY=$(route -n | grep 'UG[ \t]' | awk '{print $2}') # Get local Gateway
+		export CYBERGHOST_API_IP=$(getent ahostsv4 v2-api.cyberghostvpn.com | grep STREAM | head -n 1 | cut -d ' ' -f 1)
 		sudo ufw default deny outgoing #Deny All traffic by default on all interfaces
 		sudo ufw default deny incoming
 		sudo ufw allow out on cyberghost from any to any #Allow All over cyberghost interface
 		sudo ufw allow in on cyberghost from any to any
 		sudo ufw allow in 1337 #Allow port 1337 for CyberGhost Communication
 		sudo ufw allow out 1337
-		sudo ufw allow out 53 #Allow port 53 on all interface for initial VPN connection
-		sudo ufw allow in 53
-		sudo ufw allow out from any to 104.20.0.14 #Allow v2-api.cyberghostvpn.com [104.20.0.14] IP for connection
-		sudo ufw allow in from 104.20.0.14 to any
+		sudo ufw allow out from any to "$CYBERGHOST_API_IP" #Allow v2-api.cyberghostvpn.com [104.20.0.14] IP for connection
+		sudo ufw allow in from "$CYBERGHOST_API_IP" to any
 		
 		#Allow all ports in WHITELISTPORTS ENV [Seperate by ',']
 		if [ -n "${WHITELISTPORTS}" ]; then
@@ -41,8 +41,16 @@
 			done
 		fi
 		
+		#Login to account if config not exist
+		#config_ini=/home/root/.cyberghost/config.ini
+		#if [ ! -f "$config_ini" ]; then
+		#	(echo "$USER"; echo "$PASS" ) | sudo cyberghostvpn --setup
+		#fi
+		
 		sudo ufw enable #Start Firewall
-		ip route add 10.0.0.0/24 via 172.17.0.1 dev eth0 #Enable access to local lan
+		if [ -n "${NETWORK}" ]; then
+			ip route add "$NETWORK" via "$LOCAL_GATEWAY" dev eth0 #Enable access to local lan
+		fi
 		
 		echo "Firewall Setup Complete"	
 		echo 'FIREWALL ACTIVE WHEN FILE EXISTS' > .FIREWALL.cg
@@ -55,6 +63,8 @@
 	fi
 	
 	#WIREGUARD START AND WATCH
+	sudo ufw allow out 53 #Allow port 53 on all interface for initial VPN connection
+	sudo ufw allow in 53
 	bash /home/root/.cyberghost/run.sh #Start the CyberGhost run script
 	sudo ufw delete allow out 53 #Remove Local DNS Port to prevent leaks
 	sudo ufw delete allow in 53
