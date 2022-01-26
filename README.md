@@ -33,5 +33,9 @@ This image has a custom built in firewall. On inital start all traffic is blocke
 
 See the firewall section located in start.sh for details. 
 
+## Work in progress
+- Logging in using enviroement variables
+- In the meantime open image console use `sudo cyberghostvpn --setup` to login then restart the container
+
 ## Disclaimer
 This project was developed independently for personal use. CyberGhost has no affiliation, nor have control over the content or availability of this project. 
