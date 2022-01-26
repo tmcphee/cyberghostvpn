@@ -1,4 +1,4 @@
-p alighn="center">
+<p alighn="center">
  <a href="https://www.cyberghostvpn.com/"> <img src="https://raw.githubusercontent.com/tmcphee/cyberghostvpn/main/.img/CyberGhost-Logo-Header.png"></a>
 </p>
 
