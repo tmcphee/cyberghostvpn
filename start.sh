@@ -19,7 +19,7 @@
 		sysctl -w net.ipv4.ip_forward=1
 			
 		sudo ufw disable #Stop Firewall
-		export LOCAL_GATEWAY=$(route -n | grep 'UG[ \t]' | awk '{print $2}') # Get local Gateway
+		export LOCAL_GATEWAY=$(ip r | awk '/^def/{print $3}') # Get local Gateway
 		export CYBERGHOST_API_IP=$(getent ahostsv4 v2-api.cyberghostvpn.com | grep STREAM | head -n 1 | cut -d ' ' -f 1)
 		sudo ufw default deny outgoing #Deny All traffic by default on all interfaces
 		sudo ufw default deny incoming
@@ -49,7 +49,8 @@
 		
 		sudo ufw enable #Start Firewall
 		if [ -n "${NETWORK}" ]; then
-			ip route add "$NETWORK" via "$LOCAL_GATEWAY" dev eth0 #Enable access to local lan
+			echo "$NETWORK" "routed to " "$LOCAL_GATEWAY"
+			ip route add $NETWORK via $LOCAL_GATEWAY dev eth0 #Enable access to local lan
 		fi
 		
 		echo "Firewall Setup Complete"	
