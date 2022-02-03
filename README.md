@@ -17,7 +17,7 @@ Start the image using optional environment variables shown below. The end-user m
 docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
            -v /local/path/to/config:/home/root/.cyberghost:rw \
            -e ACC=example@gmail.com \
-           -e PASS=mypasswowrd \
+           -e PASS=mypassword \
            -e NETWORK=192.168.1.0/24 \
            -e WHITELISTPORTS=9090,8080 \
            cyberghostvpn
@@ -28,7 +28,7 @@ Other containers can connect to this image using by using its network connection
 ```
 docker run -d --net=container:cyberghostvpn other-container
 ```
-Note: If the other containers have exposed ports for example a WEBUI. Forward that port in the cyberghostvpn image, add the port to WHITELISTPORTS environment variable, and set your local LAN using NETWORK environment variable. See `Environment variables` below for details. 
+Note: If the other containers have exposed ports for example a WEBUI. Forward that port in the cyberghostvpn image, add the port to WHITELISTPORTS environment variable, and set your local LAN using NETWORK environment variable. See [Environment variables](https://github.com/tmcphee/cyberghostvpn#environment-variables) below for details. 
 
 ## Selecting a server
 
