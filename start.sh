@@ -1,4 +1,17 @@
 #!/bin/bash
+
+	enable_dns_port () {
+		echo "Allowing PORT 53 - IN/OUT"	
+		sudo ufw allow out 53 #Allow port 53 on all interface for initial VPN connection
+		sudo ufw allow in 53
+	}
+	
+	disable_dns_port () {
+		echo "Blocking PORT 53 - IN/OUT"
+		sudo ufw delete allow out 53 #Remove Local DNS Port to prevent leaks
+		sudo ufw delete allow in 53
+	}
+	
 	sudo ufw enable #Start Firewall
 
 	FILE=/usr/local/cyberghost/uninstall.sh
@@ -19,7 +32,6 @@
 		sysctl -w net.ipv4.ip_forward=1
 			
 		sudo ufw disable #Stop Firewall
-		export LOCAL_GATEWAY=$(ip r | awk '/^def/{print $3}') # Get local Gateway
 		export CYBERGHOST_API_IP=$(getent ahostsv4 v2-api.cyberghostvpn.com | grep STREAM | head -n 1 | cut -d ' ' -f 1)
 		sudo ufw default deny outgoing #Deny All traffic by default on all interfaces
 		sudo ufw default deny incoming
@@ -41,20 +53,25 @@
 			done
 		fi
 		
-		#Login to account if config not exist
-		#config_ini=/home/root/.cyberghost/config.ini
-		#if [ ! -f "$config_ini" ]; then
-		#	(echo "$USER"; echo "$PASS" ) | sudo cyberghostvpn --setup
-		#fi
-		
 		sudo ufw enable #Start Firewall
-		if [ -n "${NETWORK}" ]; then
-			echo "$NETWORK" "routed to " "$LOCAL_GATEWAY"
-			ip route add $NETWORK via $LOCAL_GATEWAY dev eth0 #Enable access to local lan
-		fi
-		
 		echo "Firewall Setup Complete"	
 		echo 'FIREWALL ACTIVE WHEN FILE EXISTS' > .FIREWALL.cg
+	fi
+	
+	#Login to account if config not exist
+	config_ini=/home/root/.cyberghost/config.ini
+	if [ ! -f "$config_ini" ]; then
+		echo "Logging into CyberGhost..."
+		enable_dns_port
+		expect /auth.sh
+		disable_dns_port
+	fi
+	
+	if [ -n "${NETWORK}" ]; then
+		echo "Adding network route..."
+		export LOCAL_GATEWAY=$(ip r | awk '/^def/{print $3}') # Get local Gateway
+		ip route add $NETWORK via $LOCAL_GATEWAY dev eth0 #Enable access to local lan
+		echo "$NETWORK" "routed to " "$LOCAL_GATEWAY" " on eth0"
 	fi
 
 	
@@ -64,24 +81,20 @@
 	fi
 	
 	#WIREGUARD START AND WATCH
-	sudo ufw allow out 53 #Allow port 53 on all interface for initial VPN connection
-	sudo ufw allow in 53
+	enable_dns_port
 	bash /home/root/.cyberghost/run.sh #Start the CyberGhost run script
-	sudo ufw delete allow out 53 #Remove Local DNS Port to prevent leaks
-	sudo ufw delete allow in 53
+	disable_dns_port
 	while true #Watch if Connection is lost then reconnect
 	do
 		sleep 30
 		if [[ $(sudo cyberghostvpn --status | grep 'No VPN connections found.' | wc -l) = "1" ]]; then
 			echo 'VPN Connection Lost - Attempting to reconnect....'
 		
-			sudo ufw allow out 53 #Add Local DNS Port to find VPN Server
-			sudo ufw allow in 53
+			enable_dns_port
 			
 			bash /home/root/.cyberghost/run.sh #Start the CyberGhost run script
 			
-			sudo ufw delete allow out 53 #Remove Local DNS Port to prevent leaks
-			sudo ufw delete allow in 53
+			disable_dns_port
 		fi
 	done
 	

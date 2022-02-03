@@ -12,7 +12,8 @@ RUN apt-get install -y lsb-core \
 	net-tools \
 	ifupdown \
 	iproute2 \
-	ufw
+	ufw \
+	expect
 RUN apt upgrade -y
 
 #Download and prepare Cyberghost for install
@@ -34,5 +35,8 @@ RUN chmod +x start.sh
 
 COPY run.sh .
 RUN chmod +x run.sh
+
+COPY auth.sh .
+RUN chmod +x auth.sh
 
 CMD ["bash", "/start.sh"]
