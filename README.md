@@ -7,7 +7,7 @@
 This is a WireGuard client docker that uses the CyberGhost Cli. It allows routing containers traffic through WireGuard.
 
 [Docker Image](https://hub.docker.com/r/tmcphee/cyberghostvpn)
-###### Running: Ubuntu 18.04 | CyberGhost 1.4.1
+###### Ubuntu 18.04 | CyberGhost 1.3.4
 ## What is WireGuard?
 
 WireGuard® is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPsec, while avoiding the massive headache. It intends to be considerably more performant than OpenVPN. WireGuard is designed as a general-purpose VPN for running on embedded interfaces and super computers alike, fit for many different circumstances.
@@ -83,6 +83,12 @@ docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
 This image has a custom built-in firewall. On initial start, all traffic is blocked except CyberGhost API IP and Local DNS for resolve. After VPN is connected Local DNS is blocked on Port 53. For first time use the firewall will go through a setup phase to include whitelisted ports where the firewall will be inactive. 
 
 See the firewall section located in start.sh for details. 
+
+## Troubleshooting
+
+Docker runs, but WireGuard does not connect or gives an error
+- Try deleteing the config.ini file located in your mapped config folder. This file is the login token for CyberGhost and may be expired. 
+
 
 ## Disclaimer
 This project was developed independently for personal use. CyberGhost has no affiliation, nor has control over the content or availability of this project. 
