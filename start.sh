@@ -12,6 +12,19 @@
 		sudo ufw delete allow in 53
 	}
 	
+	ip_stats () {
+		echo "***********CyberGhost Connection Info***********"
+		echo "IP: ""$(curl -s https://ipinfo.io/ip)"
+		echo "CITY: ""$(curl -s https://ipinfo.io/city)"
+		echo "REGION: ""$(curl -s https://ipinfo.io/region)"
+		echo "COUNTRY: ""$(curl -s https://ipinfo.io/country)"
+		
+		str="$(cat /etc/resolv.conf)"
+		value=${str#* }
+		echo "DNS: "$value
+		echo "************************************************"
+	}
+	
 	sudo ufw enable #Start Firewall
 
 	FILE=/usr/local/cyberghost/uninstall.sh
@@ -74,9 +87,15 @@
 		echo "$NETWORK" "routed to " "$LOCAL_GATEWAY" " on eth0"
 	fi
 
-	
+	# Copy over Run.sh if missing
 	FILE_RUN=/home/root/.cyberghost/run.sh
 	if [ ! -f "$FILE_RUN" ]; then
+		cp /run.sh /home/root/.cyberghost/run.sh
+	fi
+	
+	# Replace Run.sh if wrong version
+	if ! grep -q "#VER2.1" "$FILE_RUN"; then
+		rm /home/root/.cyberghost/run.sh
 		cp /run.sh /home/root/.cyberghost/run.sh
 	fi
 	
@@ -84,6 +103,7 @@
 	enable_dns_port
 	bash /home/root/.cyberghost/run.sh #Start the CyberGhost run script
 	disable_dns_port
+	ip_stats
 	while true #Watch if Connection is lost then reconnect
 	do
 		sleep 30
@@ -95,6 +115,7 @@
 			bash /home/root/.cyberghost/run.sh #Start the CyberGhost run script
 			
 			disable_dns_port
+			ip_stats
 		fi
 	done
 	
