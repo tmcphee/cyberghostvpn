@@ -18,6 +18,7 @@ docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
            -v /local/path/to/config:/home/root/.cyberghost:rw \
            -e ACC=example@gmail.com \
            -e PASS=mypassword \
+           -e COUNTRY=US \
            -e NETWORK=192.168.1.0/24 \
            -e WHITELISTPORTS=9090,8080 \
            cyberghostvpn
@@ -30,14 +31,20 @@ docker run -d --net=container:cyberghostvpn other-container
 ```
 Note: If the other containers have exposed ports for example a WEBUI. Forward that port in the cyberghostvpn image, add the port to WHITELISTPORTS environment variable, and set your local LAN using NETWORK environment variable. See [Environment variables](https://github.com/tmcphee/cyberghostvpn#environment-variables) below for details. 
 
-## Selecting a server
+## Selecting a country
 
-Once the initial setup is made the image will copy a run.sh file into the local volume (config folder). Open `run.sh` and edit the command `sudo cyberghostvpn --connect --torrent --country-code NL --wireguard` to the desired.
+Add an environment variable called `COUNTRY` and set to the desired country. 
 Examples:
-- `sudo cyberghostvpn --traffic --country-code CA --wireguard --connect`
-- `sudo cyberghostvpn --streaming 'Netflix US' --country-code US  --wireguard --connect`
+- `United states` COUNTRY=US
+- `CANADA`        COUNTRY=CA
 
 See [GyberGhost selecting a country or single server](https://support.cyberghostvpn.com/hc/en-us/articles/360020673194--How-to-select-a-country-or-single-server-with-CyberGhost-on-Linux) for more details
+
+## Custom DNS / NAMESERVER
+Add an environment variable called `NAMESERVER` and set to the desired DNS. 
+Examples:
+- Cloudflare 1.1.1.1
+- Google 8.8.8.8
 
 ## How to login
 Login by providing the ACC and PASS environment variables
@@ -65,6 +72,9 @@ docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
 - `WHITELISTPORTS` - Allow access to listed ports when VPN is connected. Delimited by comma [8080,8081,9000]
 - `ACC` - CyberGhost username - Used for login
 - `PASS` - CyberGhost password - Used for login
+- `COUNTRY` - Destination Country - See [CyberGhost Connect to a country]([https://support.cyberghostvpn.com/hc/en-us/articles/360020673194--How-to-select-a-country-or-single-server-with-CyberGhost-on-Linux](https://support.cyberghostvpn.com/hc/en-us/articles/360020673194--How-to-select-a-country-or-single-server-with-CyberGhost-on-Linux#h_01EJDGC9TZDW38J9FKNFPE6MBE))
+- `ARGS` - All additional arguments [Examples: "--torrent" "--traffic" "--streaming 'Netflix US'"]
+- `NAMESERVER` - Custom Nameserver/DNS [Examples: Cloudflare 1.1.1.1, Google 8.8.8.8]
 
 ## Firewall
 This image has a custom built-in firewall. On initial start, all traffic is blocked except CyberGhost API IP and Local DNS for resolve. After VPN is connected Local DNS is blocked on Port 53. For first time use the firewall will go through a setup phase to include whitelisted ports where the firewall will be inactive. 
