@@ -46,6 +46,8 @@ Examples:
 - Cloudflare 1.1.1.1
 - Google 8.8.8.8
 
+This image will use CyberGhost Smart DNS if no Nameserver is provided. Automatic Smart DNS for countries US, NL, JP and GB. Default is US for all other countries
+
 ## How to login
 Login by providing the ACC and PASS environment variables
 ```
