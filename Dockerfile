@@ -16,16 +16,14 @@ RUN apt-get install -y lsb-core \
 	expect
 RUN apt upgrade -y
 
-#Download and prepare Cyberghost for install
-RUN wget https://download.cyberghostvpn.com/linux/cyberghostvpn-ubuntu-18.04-1.3.4.zip -O cyberghostvpn_ubuntu.zip
-RUN unzip cyberghostvpn_ubuntu.zip
-RUN mv cyberghostvpn-ubuntu-18.04-1.3.4/* .
-RUN rm -r cyberghostvpn-ubuntu-18.04-1.3.4
-RUN rm cyberghostvpn_ubuntu.zip
-RUN sed -i 's/cyberghostvpn --setup/#cyberghostvpn --setup/g' install.sh
-
-#Install Cyberghost
-RUN bash install.sh
+#Download, prepare and instll Cyberghost 
+RUN wget https://download.cyberghostvpn.com/linux/cyberghostvpn-ubuntu-18.04-1.4.1.zip -O cyberghostvpn_ubuntu.zip && \
+	unzip cyberghostvpn_ubuntu.zip && \
+	mv cyberghostvpn-ubuntu-18.04-1.4.1/* . && \
+	rm -r cyberghostvpn-ubuntu-18.04-1.4.1  && \
+	rm cyberghostvpn_ubuntu.zip && \
+	sed -i 's/cyberghostvpn --setup/#cyberghostvpn --setup/g' install.sh && \
+	bash install.sh
 
 #Disable IPV6 on ufw
 RUN sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
