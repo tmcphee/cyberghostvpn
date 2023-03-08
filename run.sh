@@ -1,6 +1,14 @@
 #!/bin/bash
+#VER2.1
 	config_ini=/home/root/.cyberghost/config.ini
 	if [ -f "$config_ini" ]; then
+	
+		# Check if country is set. Default to US
+		if ! [ -n "$COUNTRY" ]; then
+			echo "Country variable not set. Defaulting to US"
+			export COUNTRY="US"
+		fi
+			
 		#Launch and connect to CyberGhost VPN
 		sudo cyberghostvpn --connect --country-code $COUNTRY --wireguard $ARGS
 		
