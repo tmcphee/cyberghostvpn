@@ -5,7 +5,7 @@
 		sudo cyberghostvpn --connect --country-code $COUNTRY --wireguard $ARGS
 		
 		# Add CyberGhost nameserver to resolv for DNS
-		# Add Namerver via env variable $NAMESERVER
+		# Add Nameserver via env variable $NAMESERVER
 		if [ -n "$NAMESERVER" ]; then
 			echo 'nameserver ' $NAMESERVER > /etc/resolv.conf
 		else
@@ -23,7 +23,7 @@
 				;;
 				"US") echo 'nameserver 99.83.181.72' > /etc/resolv.conf
 				;;
-				*) echo 'nameserver 1.1.1.1' > /etc/resolv.conf # Default CLOUDFLARE 1.1.1.1
+				*) echo 'nameserver 99.83.181.72' > /etc/resolv.conf
 				;;
 		esac
 		fi
