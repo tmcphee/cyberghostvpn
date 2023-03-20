@@ -32,14 +32,6 @@ RUN sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
 COPY start.sh .
 RUN chmod +x start.sh
 
-COPY run.sh .
-RUN chmod +x run.sh
-
-COPY auth.sh .
-RUN chmod +x auth.sh
-
-CMD ["bash", "/start.sh"]
-
 COPY auth.sh .
 RUN chmod +x auth.sh
 
