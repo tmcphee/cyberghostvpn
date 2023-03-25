@@ -1,5 +1,7 @@
 #!/bin/bash
 
+	config_ini=/home/root/.cyberghost/config.ini #CyberGhost Auth token
+
 	enable_dns_port () {
 		echo "Allowing PORT 53 - IN/OUT"	
 		sudo ufw allow out 53 #Allow port 53 on all interface for initial VPN connection
@@ -12,21 +14,102 @@
 		sudo ufw delete allow in 53
 	}
 	
-	ip_stats () {
-		echo "***********CyberGhost Connection Info***********"
-		echo "IP: ""$(curl -s https://ipinfo.io/ip)"
-		echo "CITY: ""$(curl -s https://ipinfo.io/city)"
-		echo "REGION: ""$(curl -s https://ipinfo.io/region)"
-		echo "COUNTRY: ""$(curl -s https://ipinfo.io/country)"
+	startup () {
+		echo "CyberGhostVPN - Docker Edition"
+		echo "----------------------------------------------------------"
+		echo "	Created By: Tyler McPhee"
+		echo "	GitHub: https://github.com/tmcphee/cyberghostvpn"
+		echo "	DockerHub: https://hub.docker.com/r/tmcphee/cyberghostvpn"
+		echo "	"
+		echo "	Ubuntu:${linux_version} | CyberGhost:${cyberghost_version} "
+		echo "----------------------------------------------------------"
 		
+		echo "**************User Defined Vaiables**************"
+		
+		if [ -n "$ACC" ]; then
+			echo "	ACC: [PASSED - NOT SHOWN]"
+		fi
+		if [ -n "$PASS" ]; then
+			echo "	PASS: [PASSED - NOT SHOWN]"
+		fi
+		
+		if [ -n "$COUNTRY" ]; then
+			echo "	COUNTRY: ${COUNTRY}"
+		fi
+		if [ -n "$NETWORK" ]; then
+			echo "	NETWORK: ${NETWORK}"
+		fi
+		if [ -n "$WHITELISTPORTS" ]; then
+			echo "	WHITELISTPORTS: ${WHITELISTPORTS}"
+		fi
+		if [ -n "$ARGS" ]; then
+			echo "	ARGS: ${ARGS}"
+		fi
+		if [ -n "$NAMESERVER" ]; then
+			echo "	NAMESERVER: ${NAMESERVER}"
+		fi
+
+		echo "*************************************************"
+	}
+	
+	ip_stats () {
+	
 		str="$(cat /etc/resolv.conf)"
 		value=${str#* }
-		echo "DNS: "$value
+		
+		echo "***********CyberGhost Connection Info***********"
+		echo "	IP: ""$(curl -s https://ipinfo.io/ip)"
+		echo "	CITY: ""$(curl -s https://ipinfo.io/city)"
+		echo "	REGION: ""$(curl -s https://ipinfo.io/region)"
+		echo "	COUNTRY: ""$(curl -s https://ipinfo.io/country)"
+		echo "	DNS: ${value}"
 		echo "************************************************"
 	}
 	
+	#Originated from Run.sh. Migrated for speed improvements
+	cyberghost_start () {
+		#Check for CyberGhost Auth file
+		if [ -f "$config_ini" ]; then
+	
+			# Check if country is set. Default to US
+			if ! [ -n "$COUNTRY" ]; then
+				echo "Country variable not set. Defaulting to US"
+				export COUNTRY="US"
+			fi
+				
+			#Launch and connect to CyberGhost VPN
+			sudo cyberghostvpn --connect --country-code $COUNTRY --wireguard $ARGS
+			
+			# Add CyberGhost nameserver to resolv for DNS
+			# Add Nameserver via env variable $NAMESERVER
+			if [ -n "$NAMESERVER" ]; then
+				echo 'nameserver ' $NAMESERVER > /etc/resolv.conf
+			else
+				# SMART DNS
+				# This will switch baised on country selected
+				# https://support.cyberghostvpn.com/hc/en-us/articles/360012002360
+				case "$COUNTRY" in
+					"NL") echo 'nameserver 75.2.43.210' > /etc/resolv.conf
+					;;
+					"GB") echo 'nameserver 75.2.79.213' > /etc/resolv.conf
+					;;
+					"JP") echo 'nameserver 76.223.64.81' > /etc/resolv.conf
+					;;
+					"DE") echo 'nameserver 13.248.182.241' > /etc/resolv.conf
+					;;
+					"US") echo 'nameserver 99.83.181.72' > /etc/resolv.conf
+					;;
+					*) echo 'nameserver 99.83.181.72' > /etc/resolv.conf
+					;;
+			esac
+			fi
+		fi
+	}
+	
+	startup
 	sudo ufw enable #Start Firewall
 
+	#Check if CyberGhost CLI is installed. If not install it
 	FILE=/usr/local/cyberghost/uninstall.sh
 	if [ ! -f "$FILE" ]; then
 		echo "CyberGhost CLI not installed. Installing..."
@@ -72,7 +155,6 @@
 	fi
 	
 	#Login to account if config not exist
-	config_ini=/home/root/.cyberghost/config.ini
 	if [ ! -f "$config_ini" ]; then
 		echo "Logging into CyberGhost..."
 		enable_dns_port
@@ -84,24 +166,12 @@
 		echo "Adding network route..."
 		export LOCAL_GATEWAY=$(ip r | awk '/^def/{print $3}') # Get local Gateway
 		ip route add $NETWORK via $LOCAL_GATEWAY dev eth0 #Enable access to local lan
-		echo "$NETWORK" "routed to " "$LOCAL_GATEWAY" " on eth0"
-	fi
-
-	# Copy over Run.sh if missing
-	FILE_RUN=/home/root/.cyberghost/run.sh
-	if [ ! -f "$FILE_RUN" ]; then
-		cp /run.sh /home/root/.cyberghost/run.sh
-	fi
-	
-	# Replace Run.sh if wrong version
-	if ! grep -q "#VER2.1" "$FILE_RUN"; then
-		rm /home/root/.cyberghost/run.sh
-		cp /run.sh /home/root/.cyberghost/run.sh
+		echo "$NETWORK" "routed to" "$LOCAL_GATEWAY" "on eth0"
 	fi
 	
 	#WIREGUARD START AND WATCH
 	enable_dns_port
-	bash /home/root/.cyberghost/run.sh #Start the CyberGhost run script
+	cyberghost_start
 	disable_dns_port
 	ip_stats
 	while true #Watch if Connection is lost then reconnect
@@ -111,10 +181,9 @@
 			echo 'VPN Connection Lost - Attempting to reconnect....'
 		
 			enable_dns_port
-			
-			bash /home/root/.cyberghost/run.sh #Start the CyberGhost run script
-			
+			cyberghost_start	
 			disable_dns_port
+			
 			ip_stats
 		fi
 	done
