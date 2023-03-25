@@ -75,7 +75,7 @@ docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
 - `WHITELISTPORTS` - Allow access to listed ports when VPN is connected. Delimited by comma [8080,8081,9000]
 - `ACC` - CyberGhost username - Used for login
 - `PASS` - CyberGhost password - Used for login
-- `COUNTRY` - Destination Country - See [CyberGhost Connect to a country]([https://support.cyberghostvpn.com/hc/en-us/articles/360020673194--How-to-select-a-country-or-single-server-with-CyberGhost-on-Linux](https://support.cyberghostvpn.com/hc/en-us/articles/360020673194--How-to-select-a-country-or-single-server-with-CyberGhost-on-Linux#h_01EJDGC9TZDW38J9FKNFPE6MBE))
+- `COUNTRY` - Destination Country - See [CyberGhost Connect to a country](https://support.cyberghostvpn.com/hc/en-us/articles/360020673194--How-to-select-a-country-or-single-server-with-CyberGhost-on-Linux#h_01EJDGC9TZDW38J9FKNFPE6MBE)
 - `ARGS` - All additional arguments [Examples: "--torrent" "--traffic" "--streaming 'Netflix US'"]
 - `NAMESERVER` - Custom Nameserver/DNS [Examples: Cloudflare 1.1.1.1, Google 8.8.8.8]
 
