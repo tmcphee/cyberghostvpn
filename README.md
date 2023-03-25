@@ -39,7 +39,7 @@ Examples:
 - `United states` COUNTRY=US
 - `CANADA`        COUNTRY=CA
 
-See [GyberGhost selecting a country or single server](https://support.cyberghostvpn.com/hc/en-us/articles/360020673194--How-to-select-a-country-or-single-server-with-CyberGhost-on-Linux) for more details
+See [CyberGhost selecting a country or single server](https://support.cyberghostvpn.com/hc/en-us/articles/360020673194--How-to-select-a-country-or-single-server-with-CyberGhost-on-Linux) for more details
 
 ## Custom DNS / NAMESERVER
 Add an environment variable called `NAMESERVER` and set to the desired DNS. 
