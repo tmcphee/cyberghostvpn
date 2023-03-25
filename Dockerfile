@@ -10,6 +10,7 @@ ENV linux_version=18.04
 RUN apt update -y
 RUN apt upgrade -y
 RUN apt dist-upgrade -y
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC
 RUN apt-get install -y tzdata
 RUN apt-get install -y lsb-core \
 	sudo \
