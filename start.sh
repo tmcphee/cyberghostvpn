@@ -14,16 +14,55 @@
 		sudo ufw delete allow in 53
 	}
 	
-	ip_stats () {
-		echo "***********CyberGhost Connection Info***********"
-		echo "IP: ""$(curl -s https://ipinfo.io/ip)"
-		echo "CITY: ""$(curl -s https://ipinfo.io/city)"
-		echo "REGION: ""$(curl -s https://ipinfo.io/region)"
-		echo "COUNTRY: ""$(curl -s https://ipinfo.io/country)"
+	startup () {
+		echo "CyberGhostVPN - Docker Edition"
+		echo "----------------------------------------------------------"
+		echo "	Created By: Tyler McPhee"
+		echo "	GitHub: https://github.com/tmcphee/cyberghostvpn"
+		echo "	DockerHub: https://hub.docker.com/r/tmcphee/cyberghostvpn"
+		echo "	"
+		echo "	Ubuntu:${linux_version} | CyberGhost:${cyberghost_version} "
+		echo "----------------------------------------------------------"
 		
+		echo "**************User Defined Vaiables**************"
+		
+		if [ -n "$ACC" ]; then
+			echo "	ACC: [PASSED - NOT SHOWN]"
+		fi
+		if [ -n "$PASS" ]; then
+			echo "	PASS: [PASSED - NOT SHOWN]"
+		fi
+		
+		if [ -n "$COUNTRY" ]; then
+			echo "	COUNTRY: ${COUNTRY}"
+		fi
+		if [ -n "$NETWORK" ]; then
+			echo "	NETWORK: ${NETWORK}"
+		fi
+		if [ -n "$WHITELISTPORTS" ]; then
+			echo "	WHITELISTPORTS: ${WHITELISTPORTS}"
+		fi
+		if [ -n "$ARGS" ]; then
+			echo "	ARGS: ${ARGS}"
+		fi
+		if [ -n "$NAMESERVER" ]; then
+			echo "	NAMESERVER: ${NAMESERVER}"
+		fi
+
+		echo "*************************************************"
+	}
+	
+	ip_stats () {
+	
 		str="$(cat /etc/resolv.conf)"
 		value=${str#* }
-		echo "DNS: "$value
+		
+		echo "***********CyberGhost Connection Info***********"
+		echo "	IP: ""$(curl -s https://ipinfo.io/ip)"
+		echo "	CITY: ""$(curl -s https://ipinfo.io/city)"
+		echo "	REGION: ""$(curl -s https://ipinfo.io/region)"
+		echo "	COUNTRY: ""$(curl -s https://ipinfo.io/country)"
+		echo "	DNS: ${value}"
 		echo "************************************************"
 	}
 	
@@ -67,6 +106,7 @@
 		fi
 	}
 	
+	startup
 	sudo ufw enable #Start Firewall
 
 	#Check if CyberGhost CLI is installed. If not install it
@@ -126,7 +166,7 @@
 		echo "Adding network route..."
 		export LOCAL_GATEWAY=$(ip r | awk '/^def/{print $3}') # Get local Gateway
 		ip route add $NETWORK via $LOCAL_GATEWAY dev eth0 #Enable access to local lan
-		echo "$NETWORK" "routed to " "$LOCAL_GATEWAY" " on eth0"
+		echo "$NETWORK" "routed to" "$LOCAL_GATEWAY" "on eth0"
 	fi
 	
 	#WIREGUARD START AND WATCH
