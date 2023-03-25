@@ -33,7 +33,7 @@ RUN wget https://download.cyberghostvpn.com/linux/cyberghostvpn-ubuntu-$linux_ve
 #Disable IPV6 on ufw
 RUN sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
 
-COPY start.sh auth.sh .
+COPY start.sh auth.sh ./
 RUN chmod +x start.sh && \
 	chmod +x auth.sh
 
