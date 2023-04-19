@@ -1,10 +1,10 @@
-<p alighn="center">
+<p align="center">
  <a href="https://www.cyberghostvpn.com/"> <img src="https://raw.githubusercontent.com/tmcphee/cyberghostvpn/main/.img/CyberGhost-Logo-Header.png"></a>
 </p>
 
 # CyberGhost VPN
  
-This is a WireGuard client docker that uses the CyberGhost Cli. It allows routing containers traffic through WireGuard.
+This is a WireGuard client docker that uses the CyberGhost CLI. It allows routing containers traffic through WireGuard.
 
 [Docker Image](https://hub.docker.com/r/tmcphee/cyberghostvpn)
 ###### Ubuntu 18.04 | CyberGhost 1.3.4
@@ -25,7 +25,7 @@ docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
            cyberghostvpn
 ```
 
-Other containers can connect to this image using by using its network connection.
+Other containers can connect to this image by using its network connection.
 `--net=container:cyberghostvpn`
 ```
 docker run -d --net=container:cyberghostvpn other-container
@@ -36,8 +36,8 @@ Note: If the other containers have exposed ports for example a WEBUI. Forward th
 
 Add an environment variable called `COUNTRY` and set to the desired country. 
 Examples:
-- `United states` COUNTRY=US
-- `CANADA`        COUNTRY=CA
+- `United States` COUNTRY=US
+- `Canada`        COUNTRY=CA
 
 See [CyberGhost selecting a country or single server](https://support.cyberghostvpn.com/hc/en-us/articles/360020673194--How-to-select-a-country-or-single-server-with-CyberGhost-on-Linux) for more details
 
@@ -59,8 +59,8 @@ docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
            cyberghostvpn
 ```
 
-## How to acceess ports locally
-Access ports [webUI] by providing the NETWORK and WHITELISTPORTS environment variables. Where NETWORK is the users network and WHITELISTPORTS is the ports the user wants to expose. 
+## How to access ports locally
+Access ports [webUI] by providing the NETWORK and WHITELISTPORTS environment variables. Where NETWORK is the user’s network and WHITELISTPORTS is the ports the user wants to expose. 
 ```
 docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
            -v /local/path/to/config:/home/root/.cyberghost:rw \
@@ -87,8 +87,8 @@ See the firewall section located in start.sh for details.
 ## Troubleshooting
 
 Docker runs, but WireGuard does not connect or gives an error
-- Try deleteing the config.ini file located in your mapped config folder. This file is the login token for CyberGhost and may be expired. 
+- Try deleting the config.ini file located in your mapped config folder. This file is the login token for CyberGhost and may be expired. 
 
 
 ## Disclaimer
-This project was developed independently for personal use. CyberGhost has no affiliation, nor has control over the content or availability of this project. 
+This project was developed independently for personal use. CyberGhost has no affiliation, nor has control over the content or availability of this project.
