@@ -47,7 +47,7 @@ Examples:
 - Cloudflare 1.1.1.1
 - Google 8.8.8.8
 
-This image will use CyberGhost Smart DNS if no Nameserver is provided. Automatic Smart DNS for countries US, NL, JP and GB. Default is US for all other countries
+This image will use CyberGhost Smart DNS if no Nameserver is provided. Automatic Smart DNS for countries US, NL, JP and GB. Default is CloudFlare [1.1.1.1] for all other countries.
 
 ## How to login
 Login by providing the ACC and PASS environment variables
@@ -78,6 +78,8 @@ docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
 - `COUNTRY` - Destination Country - See [CyberGhost Connect to a country](https://support.cyberghostvpn.com/hc/en-us/articles/360020673194--How-to-select-a-country-or-single-server-with-CyberGhost-on-Linux#h_01EJDGC9TZDW38J9FKNFPE6MBE)
 - `ARGS` - All additional arguments [Examples: "--torrent" "--traffic" "--streaming 'Netflix US'"]
 - `NAMESERVER` - Custom Nameserver/DNS [Examples: Cloudflare 1.1.1.1, Google 8.8.8.8]
+- `PROTOCOL` - Choose between WireGuard or OpenVPN [wireguard, openvpn]. Default WireGuard
+- `FIREWALL` - Optional disable firewall. [FIREWALL=False]. Default True
 
 ## Firewall
 This image has a custom built-in firewall. On initial start, all traffic is blocked except CyberGhost API IP and Local DNS for resolve. After VPN is connected Local DNS is blocked on Port 53. For first time use the firewall will go through a setup phase to include whitelisted ports where the firewall will be inactive. 
