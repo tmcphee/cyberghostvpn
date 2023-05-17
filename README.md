@@ -13,16 +13,21 @@ This is a WireGuard client docker that uses the CyberGhost CLI. It allows routin
 WireGuard® is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPsec, while avoiding the massive headache. It intends to be considerably more performant than OpenVPN. WireGuard is designed as a general-purpose VPN for running on embedded interfaces and super computers alike, fit for many different circumstances.
 
 ## How to use this image
-Start the image using optional environment variables shown below. The end-user must supply a volume for local storage of the CyberGhost auth and token files. Supplied DNS is optional to avoid using ISP DNS during the initial connection. 
+Start the image using optional environment variables shown below. The end-user must supply a volume for local storage of the CyberGhost auth and token files. Supplied DNS is optional to avoid using ISP DNS during the initial connection. Ensure to run the image in privileged mode.
 ```
-docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
-           -v /local/path/to/config:/home/root/.cyberghost:rw \
-           -e ACC=example@gmail.com \
-           -e PASS=mypassword \
-           -e COUNTRY=US \
-           -e NETWORK=192.168.1.0/24 \
-           -e WHITELISTPORTS=9090,8080 \
-           cyberghostvpn
+docker run 
+   -d 
+   --name='cyberghostvpn'
+   --net='bridge'
+   --privileged=true
+   --cap-add=NET_ADMIN 
+   -e TZ="America/New_York"
+   -e 'ACC'='example@gmail.com'
+   -e 'PASS'='mypassword'
+   -e 'COUNTRY'='US'
+   -e 'NETWORK'='192.168.1.0/24'
+   -e 'WHITELISTPORTS'='9090,8080'
+   -v '/local/path/to/config':'/home/root/.cyberghost:rw'
 ```
 
 Other containers can connect to this image by using its network connection.
