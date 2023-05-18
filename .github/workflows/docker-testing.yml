@@ -1,0 +1,39 @@
+# This is a basic workflow to help you get started with Actions
+
+name: cyberghostvpn-testing
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  release:
+    branches: [ working ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      
+      # Login to Docker
+      - name: Docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PW: ${{ secrets.DOCKER_PW }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PW
+          
+      # Builds the docker image
+      - name: Docker build Latest
+        run: |
+          docker build . -t tmcphee/ctest:latest
+          
+      # Pushes the Docker image to DockerHub
+      - name: Docker push Latest
+        run: |
+          docker push tmcphee/ctest:latest
