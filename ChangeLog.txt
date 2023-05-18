@@ -1,0 +1,26 @@
+#1.1.4
+	- Ping to check Internet reachability every 30 minutes
+	- Error catching for incorrect login auth [config.ini]
+	- Changed default DNS to CloudFlare 1.1.1.1
+	- Error codes for tracing
+	- No cache headers added to IP and Location check
+	- Firewall Toggle ENV variable
+	- Protocal Select ENV Variable [WireGuard, OpenVPN]
+	
+#1.1.3
+	- Run.sh factored into main script [start.sh] for speed improvements
+	- Variable printouts for Debugging
+	- Removed unused imports iptables, net-tools, and ifupdown
+	
+#1.1.1
+	- Update CyberGhost CLI Version to 1.3.4
+	- New variables COUNTRY, ARGS, and NAMESERVER
+	- Updated Run.sh with new DNS sources, error catching, and tweaks
+	- Updated Start.sh to show VPN connection info after successful connection
+	
+#1.0.1
+	- Added login by environment variables
+	- Fix for routing
+
+#1.0.0
+	- Initial Realease
