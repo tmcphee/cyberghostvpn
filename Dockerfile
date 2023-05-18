@@ -7,28 +7,38 @@ LABEL DOCKER="https://hub.docker.com/r/tmcphee/cyberghostvpn"
 ENV cyberghost_version=1.3.4
 ENV linux_version=18.04
 
-RUN apt update -y
-RUN apt upgrade -y
-RUN apt dist-upgrade -y
-RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC
-RUN apt-get install -y tzdata
-RUN apt-get install -y lsb-core \
+ARG DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC
+
+#RUN yes | unminimize
+
+RUN apt-get update -y
+RUN apt-get install -y \
 	sudo \
 	wget \
 	unzip \
-	openresolv \
 	iproute2 \
+	openresolv \
 	ufw \
-	expect
-
-#Download, prepare and instll Cyberghost 
-RUN wget https://download.cyberghostvpn.com/linux/cyberghostvpn-ubuntu-$linux_version-$cyberghost_version.zip -O cyberghostvpn_ubuntu.zip && \
+	expect \
+	iputils-ping \
+	curl \
+	lsb-release
+	
+RUN apt-get update -y && \
+	apt-get autoremove -y && \
+	apt-get autoclean -y
+	
+#Download, prepare and install CyberGhost CLI [COPY - CACHED VERSION]
+#RUN wget https://download.cyberghostvpn.com/linux/cyberghostvpn-ubuntu-$linux_version-$cyberghost_version.zip -O cyberghostvpn_ubuntu.zip -U="Mozilla/5.0" && \
+COPY ver/cyberghostvpn-ubuntu-$linux_version-$cyberghost_version.zip ./
+RUN mv cyberghostvpn-ubuntu-$linux_version-$cyberghost_version.zip cyberghostvpn_ubuntu.zip && \
 	unzip cyberghostvpn_ubuntu.zip && \
 	mv cyberghostvpn-ubuntu-$linux_version-$cyberghost_version/* . && \
 	rm -r cyberghostvpn-ubuntu-$linux_version-$cyberghost_version  && \
 	rm cyberghostvpn_ubuntu.zip && \
 	sed -i 's/cyberghostvpn --setup/#cyberghostvpn --setup/g' install.sh && \
 	bash install.sh
+	
 
 #Disable IPV6 on ufw
 RUN sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
