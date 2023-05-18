@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash
 
 	config_ini=/home/root/.cyberghost/config.ini #CyberGhost Auth token
 
@@ -53,6 +53,9 @@
 		fi
 
 		echo "**************************************************"
+		
+		#Add the cyberghost interface for WireGuard
+		#ip link add dev cyberghost type wireguard
 	}
 	
 	ip_stats () {
@@ -86,12 +89,12 @@
 			fi
 				
 			#Launch and connect to CyberGhost VPN
-			sudo cyberghostvpn --connect --country-code $COUNTRY --$PROTOCOL $ARGS
+			sudo cyberghostvpn --connect --country-code "$COUNTRY" --"$PROTOCOL" "$ARGS"
 			
 			# Add CyberGhost nameserver to resolv for DNS
 			# Add Nameserver via env variable $NAMESERVER
 			if [ -n "$NAMESERVER" ]; then
-				echo 'nameserver ' $NAMESERVER > /etc/resolv.conf
+				echo 'nameserver ' "$NAMESERVER" > /etc/resolv.conf
 			else
 				# SMART DNS
 				# This will switch baised on country selected
@@ -152,7 +155,7 @@
 			echo "Initiating Firewall First Time Setup..."
 				
 			sudo ufw disable #Stop Firewall
-			export CYBERGHOST_API_V2_IP=$(getent ahostsv4 v2-api.cyberghostvpn.com | grep STREAM | head -n 1 | cut -d ' ' -f 1)
+			export CYBERGHOST_API_IP=$(getent ahostsv4 v2-api.cyberghostvpn.com | grep STREAM | head -n 1 | cut -d ' ' -f 1)
 			#export CYBERGHOST_API_IP=$(getent ahostsv4 api.cyberghostvpn.com | grep STREAM | head -n 1 | cut -d ' ' -f 1)
 			sudo ufw default deny outgoing #Deny All traffic by default on all interfaces
 			sudo ufw default deny incoming
@@ -162,8 +165,8 @@
 			sudo ufw allow out 1337
 			sudo ufw allow in 891 #Allow port 1194 for CyberGhost OpenVPN Communication
 			sudo ufw allow out 819
-			sudo ufw allow out from any to "$CYBERGHOST_API_V2_IP" #Allow v2-api.cyberghostvpn.com [104.20.0.14] IP for connection
-			sudo ufw allow in from "$CYBERGHOST_V2_API_IP" to any
+			sudo ufw allow out from any to "$CYBERGHOST_API_IP" #Allow v2-api.cyberghostvpn.com [104.20.0.14] IP for connection
+			sudo ufw allow in from "$CYBERGHOST_API_IP" to any
 			#sudo ufw allow out from any to "$CYBERGHOST_API_IP" #Allow api.cyberghostvpn.com [104.20.1.14] IP for connection
 			#sudo ufw allow in from "$CYBERGHOST_API_IP" to any
 			
@@ -217,7 +220,7 @@
 	if [ -n "${NETWORK}" ]; then
 		echo "Adding network route..."
 		export LOCAL_GATEWAY=$(ip r | awk '/^def/{print $3}') # Get local Gateway
-		ip route add $NETWORK via $LOCAL_GATEWAY dev eth0 #Enable access to local lan
+		ip route add "$NETWORK" via "$LOCAL_GATEWAY" dev eth0 #Enable access to local lan
 		echo "$NETWORK" "routed to" "$LOCAL_GATEWAY" "on eth0"
 	fi
 	
@@ -234,7 +237,7 @@
 		fi
 		
 		#Every 30 Minutes ping CloudFlare to check internet reachability 
-		if [ $(date +%H) = $t_hr ] && [ $(date +%M) = $t_min ]; then
+		if [ "$(date +%H)" = "$t_hr" ] && [ "$(date +%M)" = "$t_min" ]; then
 			if ! check_up; then
 				echo '[ERROR 03] Internet not reachable - Restarting VPN...'
 				sudo cyberghostvpn --stop
@@ -252,3 +255,5 @@
 #01 Can't Login to CyberGhost - Credentials not provided
 #02 VPN Connection Lost
 #03 Internet Connection Lost
+	
+	
