@@ -1,3 +1,7 @@
+
+#1.2.1
+	- Update Ubuntu Version to 20.04
+	- Suppressed Commands
 #1.1.4
 	- Ping to check Internet reachability every 30 minutes
 	- Error catching for incorrect login auth [config.ini]
