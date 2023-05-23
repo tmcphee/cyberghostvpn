@@ -21,7 +21,7 @@
 		echo "	GitHub: https://github.com/tmcphee/cyberghostvpn"
 		echo "	DockerHub: https://hub.docker.com/r/tmcphee/cyberghostvpn"
 		echo "	"
-		echo "	Ubuntu:${linux_version} | CyberGhost:${cyberghost_version} | V${script_version}"
+		echo "	Ubuntu:${linux_version} | CyberGhost:${cyberghost_version} | ${script_version}"
 		echo "----------------------------------------------------------"
 		
 		echo "**************User Defined Variables**************"
