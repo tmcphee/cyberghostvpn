@@ -31,7 +31,7 @@ jobs:
       # Builds the docker image
       - name: Docker build Latest
         run: |
-          docker build . -t tmcphee/cyberghostvpn:latest
+          docker build --build-arg buildtime_script_version=${{ github.event.release.tag_name }} . -t tmcphee/cyberghostvpn:latest
           
       # Pushes the Docker image to DockerHub
       - name: Docker push Latest
@@ -41,7 +41,7 @@ jobs:
       # Builds the docker image
       - name: Docker build Tag
         run: |
-          docker build . -t tmcphee/cyberghostvpn:${{ github.event.release.tag_name }}
+          docker build --build-arg buildtime_script_version=${{ github.event.release.tag_name }} . -t tmcphee/cyberghostvpn:${{ github.event.release.tag_name }}
           
       # Pushes the Docker image to DockerHub
       - name: Docker push Tag
