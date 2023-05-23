@@ -3,11 +3,12 @@
 </p>
 
 # CyberGhost VPN
- 
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tmcphee/cyberghostvpn/docker-image.yml?style=for-the-badge) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/tmcphee/cyberghostvpn?style=for-the-badge)
+
 This is a WireGuard client docker that uses the CyberGhost CLI. It allows routing containers traffic through WireGuard.
 
 [Docker Image](https://hub.docker.com/r/tmcphee/cyberghostvpn)
-###### Ubuntu 18.04 | CyberGhost 1.3.4
+###### Ubuntu 20.04 | CyberGhost 1.3.4
 ## What is WireGuard?
 
 WireGuard® is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPsec, while avoiding the massive headache. It intends to be considerably more performant than OpenVPN. WireGuard is designed as a general-purpose VPN for running on embedded interfaces and super computers alike, fit for many different circumstances.
