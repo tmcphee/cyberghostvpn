@@ -51,6 +51,9 @@
 		if [ -n "$PROTOCOL" ]; then
 			echo "	PROTOCOL: ${PROTOCOL}"
 		fi
+		if [ -n "$PROXY" ]; then
+			echo "	PROXY: ${PROXY}"
+		fi
 
 		echo "**************************************************"
 		
@@ -71,6 +74,15 @@
 	
 	#Originated from Run.sh. Migrated for speed improvements
 	cyberghost_start () {
+		#Stop Proxy service to prevent dns leaks
+		if [ -n "${PROXY}" ]; then
+			if [ "${PROXY}" == "True" ]; then
+				echo Stopping HTTP Proxy...
+				sudo systemctl disable squid
+				sudo systemctl stop squid
+				sudo systemctl status squid
+			fi
+		fi
 		enable_dns_port
 		#Check for CyberGhost Auth file
 		if [ -f "$config_ini" ]; then
@@ -114,6 +126,15 @@
 			fi
 		fi
 		disable_dns_port
+		#Enable Proxy service
+		if [ -n "${PROXY}" ]; then
+			if [ "${PROXY}" == "True" ]; then
+				echo Starting HTTP Proxy...
+				sudo systemctl enable squid
+				sudo systemctl start squid
+				sudo systemctl status squid
+			fi
+		fi
 		ip_stats
 	}
 	
@@ -219,6 +240,23 @@
 		export LOCAL_GATEWAY=$(ip r | awk '/^def/{print $3}') # Get local Gateway
 		ip route add "$NETWORK" via "$LOCAL_GATEWAY" dev eth0 #Enable access to local lan
 		echo "$NETWORK" "routed to" "$LOCAL_GATEWAY" "on eth0"
+	fi
+	
+	
+	if [ -n "${PROXY}" ]; then
+		if [ "${PROXY}" == "True" ]; then
+			echo "Seting up HTTP proxy on port 3128..."
+			sudo ufw allow in 3128 > /dev/null 2>&1 #Enable Proxy Port
+			sudo ufw allow out 3128 > /dev/null 2>&1
+		else
+			echo "Disabling HTTP proxy..."
+			sudo ufw deny in 3128 > /dev/null 2>&1 #Disable Proxy Port
+			sudo ufw deny out 3128 > /dev/null 2>&1
+		fi
+	else
+		echo "Disabling HTTP proxy..."
+		sudo ufw deny in 3128 > /dev/null 2>&1 #Disable Proxy Port
+		sudo ufw deny out 3128 > /dev/null 2>&1
 	fi
 	
 	#WIREGUARD START AND WATCH
