@@ -75,6 +75,15 @@ docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
            cyberghostvpn
 ```
 
+## HTTP Proxy Service
+Connect devices on the same network with HTTP proxy. Allowing to use the same IP address as the VPN client.
+Proxy will disconnect if VPN conection is starting or lost. 
+Proxy Port: 3128
+```
+           -e PROXY=True
+```
+Connect devices with the HOST IP and proxy port 3128
+
 ## Environment variables
 
 - `NETWORK` - Adds a route to the local network once the VPN is connected. CIDR networks [192.168.1.0/24]
@@ -86,6 +95,7 @@ docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
 - `NAMESERVER` - Custom Nameserver/DNS [Examples: Cloudflare 1.1.1.1, Google 8.8.8.8]
 - `PROTOCOL` - Choose between WireGuard or OpenVPN [wireguard, openvpn]. Default WireGuard
 - `FIREWALL` - Optional disable firewall. [FIREWALL=False]. Default True
+- `PROXY` - Optional enable proxy. [PROXY=True]. Default False
 
 ## Firewall
 This image has a custom built-in firewall. On initial start, all traffic is blocked except CyberGhost API IP and Local DNS for resolve. After VPN is connected Local DNS is blocked on Port 53. For first time use the firewall will go through a setup phase to include whitelisted ports where the firewall will be inactive. 
