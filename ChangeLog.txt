@@ -1,4 +1,7 @@
 
+#1.2.2
+	- Add HTTP Proxy Service
+	- Proxy Toggle ENV variable
 #1.2.1
 	- Update Ubuntu Version to 20.04
 	- Suppressed Commands
