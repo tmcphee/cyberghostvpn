@@ -25,7 +25,10 @@ RUN apt-get install -y \
 	expect \
 	iputils-ping \
 	curl \
-	lsb-release
+	lsb-release \
+	squid \
+	apache2-utils \
+	systemctl
 	
 RUN apt-get update -y && \
 	apt-get autoremove -y && \
@@ -42,6 +45,9 @@ RUN mv cyberghostvpn-ubuntu-$linux_version-$cyberghost_version.zip cyberghostvpn
 	sed -i 's/cyberghostvpn --setup/#cyberghostvpn --setup/g' install.sh && \
 	bash install.sh
 	
+#Setup HTTP Proxy. Allow all connections
+RUN sed -i 's/http_access allow localhost/http_access allow all/g' /etc/squid/squid.conf && \
+	sed -i 's/http_access deny all/#http_access deny all/g' /etc/squid/squid.conf
 
 #Disable IPV6 on ufw
 RUN sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw

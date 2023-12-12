@@ -28,6 +28,8 @@ docker run
    -e 'COUNTRY'='US'
    -e 'NETWORK'='192.168.1.0/24'
    -e 'WHITELISTPORTS'='9090,8080'
+   -p 9090:9090
+   -p 8080:8080
    -v '/local/path/to/config':'/home/root/.cyberghost:rw'
 ```
 
@@ -58,22 +60,28 @@ This image will use CyberGhost Smart DNS if no Nameserver is provided. Automatic
 ## How to login
 Login by providing the ACC and PASS environment variables
 ```
-docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
-           -v /local/path/to/config:/home/root/.cyberghost:rw \
-           -e ACC=example@gmail.com \
-           -e PASS=mypasswowrd \
-           cyberghostvpn
+           -e ACC=example@gmail.com
+           -e PASS=mypassword
 ```
 
 ## How to access ports locally
 Access ports [webUI] by providing the NETWORK and WHITELISTPORTS environment variables. Where NETWORK is the user’s network and WHITELISTPORTS is the ports the user wants to expose. 
 ```
-docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
-           -v /local/path/to/config:/home/root/.cyberghost:rw \
-           -e NETWORK=192.168.1.0/24 \
-           -e WHITELISTPORTS=9090,8080 \
-           cyberghostvpn
+           -e NETWORK=192.168.1.0/24
+           -e WHITELISTPORTS=9090,8080
+           -p 9090:9090
+           -p 8080:8080
 ```
+
+## HTTP Proxy Service
+Connect devices on the same network with HTTP proxy. Allowing to use the same IP address as the VPN client.
+Proxy will disconnect if VPN conection is starting or lost. 
+Proxy Port: 3128
+```
+           -e PROXY=True
+           -p 3128:3128
+```
+Connect devices with the HOST IP and proxy port 3128
 
 ## Environment variables
 
@@ -86,6 +94,7 @@ docker run -d --cap-add=NET_ADMIN --dns 1.1.1.1 \
 - `NAMESERVER` - Custom Nameserver/DNS [Examples: Cloudflare 1.1.1.1, Google 8.8.8.8]
 - `PROTOCOL` - Choose between WireGuard or OpenVPN [wireguard, openvpn]. Default WireGuard
 - `FIREWALL` - Optional disable firewall. [FIREWALL=False]. Default True
+- `PROXY` - Optional enable proxy. [PROXY=True]. Default False
 
 ## Firewall
 This image has a custom built-in firewall. On initial start, all traffic is blocked except CyberGhost API IP and Local DNS for resolve. After VPN is connected Local DNS is blocked on Port 53. For first time use the firewall will go through a setup phase to include whitelisted ports where the firewall will be inactive. 
