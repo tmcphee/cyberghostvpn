@@ -6,7 +6,7 @@ LABEL DOCKER="https://hub.docker.com/r/tmcphee/cyberghostvpn"
 
 ARG buildtime_script_version
 
-ENV cyberghost_version=1.3.4
+ENV cyberghost_version=1.4.1
 ENV linux_version=20.04
 ENV script_version=$buildtime_script_version
 
@@ -28,15 +28,16 @@ RUN apt-get install -y \
 	lsb-release \
 	squid \
 	apache2-utils \
-	systemctl
+	systemctl \
+	dos2unix
 	
 RUN apt-get update -y && \
 	apt-get autoremove -y && \
 	apt-get autoclean -y
 	
 #Download, prepare and install CyberGhost CLI [COPY - CACHED VERSION]
-#RUN wget https://download.cyberghostvpn.com/linux/cyberghostvpn-ubuntu-$linux_version-$cyberghost_version.zip -O cyberghostvpn_ubuntu.zip -U="Mozilla/5.0" && \
-COPY ver/cyberghostvpn-ubuntu-$linux_version-$cyberghost_version.zip ./
+RUN wget https://download.cyberghostvpn.com/linux/cyberghostvpn-ubuntu-$linux_version-$cyberghost_version.zip -U="Mozilla/5.0"
+# COPY ver/cyberghostvpn-ubuntu-$linux_version-$cyberghost_version.zip ./
 RUN mv cyberghostvpn-ubuntu-$linux_version-$cyberghost_version.zip cyberghostvpn_ubuntu.zip && \
 	unzip cyberghostvpn_ubuntu.zip && \
 	mv cyberghostvpn-ubuntu-$linux_version-$cyberghost_version/* . && \
@@ -53,6 +54,7 @@ RUN sed -i 's/http_access allow localhost/http_access allow all/g' /etc/squid/sq
 RUN sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
 
 COPY start.sh auth.sh ./
+RUN dos2unix start.sh auth.sh
 RUN chmod +x start.sh && \
 	chmod +x auth.sh
 
