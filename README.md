@@ -10,7 +10,7 @@ This is a WireGuard client docker that uses the CyberGhost CLI. It allows routin
 [Docker Image](https://hub.docker.com/r/tmcphee/cyberghostvpn)
 ###### Ubuntu 20.04 | CyberGhost 1.3.4
 
-OpenVPN only image available [here](https://hub.docker.com/r/tmcphee/cyberghost-openvpn) running Cyberghost 1.4.1 
+###### OpenVPN only image available [here](https://hub.docker.com/r/tmcphee/cyberghost-openvpn) running CyberGhost 1.4.1 
 
 ## What is WireGuard?
 
