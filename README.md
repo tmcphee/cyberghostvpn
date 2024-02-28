@@ -56,7 +56,6 @@ services:
       - 9090:9090
       - 8080:8080
     restart: unless-stopped
-
 ```
 
 Other containers can connect to this image by using its network connection.
