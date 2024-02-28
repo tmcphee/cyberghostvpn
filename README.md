@@ -35,12 +35,56 @@ docker run
    -p 8080:8080
    -v '/local/path/to/config':'/home/root/.cyberghost:rw'
 ```
+OR using Docker Compose
+```
+version: '3'
+services:
+  cyberghostvpn:
+    image: tmcphee/cyberghostvpn
+    container_name: cyberghostvpn
+    network_mode: "bridge"
+    privileged: true
+    cap_add: 
+      - NET_ADMIN
+    volumes:
+      - /local/path/to/config:/home/root/.cyberghost:rw
+    environment:
+      - TZ=America/New_York
+      - ACC=example@gmail.com
+      - PASS=mypassword
+      - COUNTRY=US
+      - NETWORK=192.168.1.0/24
+      - WHITELISTPORTS=9090,8080
+    ports:
+      - 9090:9090
+      - 8080:8080
+    restart: unless-stopped
+```
 
 Other containers can connect to this image by using its network connection.
 `--net=container:cyberghostvpn`
 ```
 docker run -d --net=container:cyberghostvpn other-container
 ```
+OR in Docker Compose
+`network_mode: container:cyberghostvpn`
+```
+services:
+  other_service:
+    image: other_service_image
+    container_name: other_service
+    network_mode: container:cyberghostvpn
+```
+
+If using Docker Compose, place all ports needed from other container into the ports section
+```
+ports:
+  - 9090:9090
+  - 8080:8080
+  - 6000:6000
+  - 6881:6881
+```
+
 Note: If the other containers have exposed ports for example a WEBUI. Forward that port in the cyberghostvpn image, add the port to WHITELISTPORTS environment variable, and set your local LAN using NETWORK environment variable. See [Environment variables](https://github.com/tmcphee/cyberghostvpn#environment-variables) below for details. 
 
 ## Selecting a country
